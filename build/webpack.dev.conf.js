@@ -13,39 +13,42 @@ const portfinder = require('portfinder')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
+// Separate DevServer Config
+const devServerConfig = {
+  clientLogLevel: 'warning',
+  historyApiFallback: {
+    rewrites: [
+      { from: /.*/, to: path.posix.join(config.dev.assetsPublicPath, 'index.html') }
+    ]
+  },
+  hot: true,
+  contentBase: false, // since we use CopyWebpackPlugin.
+  compress: true,
+  port: process.env.PORT || config.dev.port,
+  host: '0.0.0.0',
+  open: config.dev.autoOpenBrowser,
+  overlay: config.dev.errorOverlay && { warnings: false, errors: true },
+  publicPath: config.dev.assetsPublicPath,
+  proxy: config.dev.proxyTable,
+  quiet: true,
+  watchOptions: {
+    poll: config.dev.poll
+  }
+};
+
+// HtmlWebpackPlugin Configuration
+const HtmlWebpackPluginConfig = {
+  filename: 'index.html',
+  template: 'index.html',
+  inject: true,
+};
+
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
   },
-  // cheap-module-eval-source-map is faster for development
   devtool: config.dev.devtool,
-
-  // these devServer options should be customized in /config/index.js
-  devServer: {
-    clientLogLevel: 'warning',
-    historyApiFallback: {
-      rewrites: [
-        { from: /.*/, to: path.posix.join(config.dev.assetsPublicPath, 'index.html') }
-      ]
-    },
-    hot: true,
-    contentBase: false, // since we use CopyWebpackPlugin.
-    compress: true,
-    // Heroku dynamically assigns a port, so we configure the dev server to use the PORT environment variable if available.
-    port: process.env.PORT || config.dev.port,
-    host: '0.0.0.0', // Listen on all network interfaces to make it accessible externally
-    // Other devServer configurations remain unchanged
-    open: config.dev.autoOpenBrowser,
-    overlay: config.dev.errorOverlay
-      ? { warnings: false, errors: true }
-      : false,
-    publicPath: config.dev.assetsPublicPath,
-    proxy: config.dev.proxyTable,
-    quiet: true, // necessary for FriendlyErrorsPlugin
-    watchOptions: {
-      poll: config.dev.poll
-    }
-  },
+  devServer: devServerConfig,
   plugins: [
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env')
@@ -53,22 +56,16 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
     new webpack.NoEmitOnErrorsPlugin(),
-    // https://github.com/ampedandwired/html-webpack-plugin
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'index.html',
-      inject: true
-    }),
-    // copy custom static assets
+    new HtmlWebpackPlugin(HtmlWebpackPluginConfig),
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../static'),
         to: config.dev.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
   ]
-})
+});
 
 module.exports = new Promise((resolve, reject) => {
   portfinder.basePort = process.env.PORT || config.dev.port
