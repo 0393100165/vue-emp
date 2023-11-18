@@ -18,8 +18,8 @@
 </template>
 
 <script>
-// import axiosInstance from '@/config/constant.js'
-import { ref, reactive, computed, watch } from 'vue'
+import axiosInstance from '@/config/constant.js'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 
 export default {
   name: 'HelloWorld',
@@ -72,15 +72,15 @@ export default {
       return first.value.trim() && last.value.trim()
     }
 
-    // onMounted(async () => {
-    //   try {
-    //     const response = await axiosInstance.get('agents')
-    //     agentsData.value = response.data
-    //   } catch (err) {
-    //     console.error('Error fetching data:', err)
-    //     error.value = err
-    //   }
-    // })
+    onMounted(async () => {
+      try {
+        const response = await axiosInstance.get('agents')
+        agentsData.value = response.data
+      } catch (err) {
+        console.error('Error fetching data:', err)
+        error.value = err
+      }
+    })
 
     return {
       agentsData,
