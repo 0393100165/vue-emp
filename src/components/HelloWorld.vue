@@ -6,7 +6,7 @@
 
 <script>
 
-import axiosInstance from '../constant.js'
+import axiosInstance from '@/config/constant.js'
 export default {
   name: 'HelloWorld',
   data () {
