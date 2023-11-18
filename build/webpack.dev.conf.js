@@ -31,8 +31,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     hot: true,
     contentBase: false, // since we use CopyWebpackPlugin.
     compress: true,
-    host: HOST || config.dev.host,
-    port: PORT || config.dev.port,
+    // Heroku dynamically assigns a port, so we configure the dev server to use the PORT environment variable if available.
+    port: process.env.PORT || config.dev.port,
+    host: '0.0.0.0', // Listen on all network interfaces to make it accessible externally
+    // Other devServer configurations remain unchanged
     open: config.dev.autoOpenBrowser,
     overlay: config.dev.errorOverlay
       ? { warnings: false, errors: true }
