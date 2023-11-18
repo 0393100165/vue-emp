@@ -34,8 +34,7 @@ const devServerConfig = {
   watchOptions: {
     poll: config.dev.poll
   },
-  // Add the disableHostCheck option
-  disableHostCheck: true,
+  public: 'https://vue-emp-cb5416128590.herokuapp.com'
 };
 
 // HtmlWebpackPlugin Configuration
