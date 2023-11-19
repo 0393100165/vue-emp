@@ -1,16 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
-
-      <!-- <div class="input-group">
-        <label for="productList">Select Product:</label>
-        <select id="productList" size="5" v-model="selectedProduct">
-          <option v-for="product in filteredProducts" :key="product.id">
-            {{ product.productName }} - {{ product.productDescription }}
-          </option>
-        </select>
-      </div> -->
-
+      <span>enter agernt name and email to online auction</span>
       <div class="input-group">
         <label for="agentName">Agent Name:</label>
         <input id="agentName" v-model="agentName" placeholder="Agent Name">
@@ -22,11 +13,11 @@
       </div>
 
       <div class="products-list">
-        <h2>Products List</h2>
+        <h2>selected product to online auction</h2>
         <ul>
-          <li v-for="product in filteredProducts" :key="product.id">
-            <strong>Name:</strong> {{ product.productName }}<br>
-            <strong>Description:</strong> {{ product.productDescription }}
+          <li v-for="product in productsData" :key="product.id">
+            <strong>Name:</strong> {{ product.name }}<br>
+            <strong>Description:</strong> {{ product.description }}
           </li>
         </ul>
       </div>
@@ -34,7 +25,7 @@
     </div>
 
     <div class="agents-list">
-      <h2>Agents List</h2>
+      <h2>Agents list after online auction</h2>
       <ul>
         <li v-for="agent in agentsData" :key="agent.id">
           <strong>Name:</strong> {{ agent.name }}<br>
@@ -131,53 +122,26 @@ export default {
     const agentsData = ref([])
     const productsData = ref([])
     const error = ref(null)
-
-    const selectedAgent = ref(null)
     const prefix = ref('')
+    const agentName = ref('')
+    const agentEmail = ref('')
     const name = ref('')
     const email = ref('')
+    const description = ref('')
+    const selectedProduct = ref(null)
 
-    const filteredAgents = computed(() =>
-      agentsData.value.filter((agent) =>
-        agent.name.toLowerCase().startsWith(prefix.value.toLowerCase())
+    const filteredProducts = computed(() =>
+      productsData.value.filter(product =>
+        product.name.includes(name) &&
+        product.description.includes(email)
       )
     )
 
-    watch(selectedAgent, (agent) => {
-      if (agent) {
-        [name.value, email.value] = [agent.name, agent.email]
+    watch(selectedProduct, (product) => {
+      if (product) {
+        [product.value.name, product.description.value] = [product.name, product.description]
       }
     })
-
-    // const create = () => {
-    //   if (hasValidInput()) {
-    //     const fullName = `${name.value}, ${email.value}`
-    //     if (!agentsData.value.some((agent) => agent.name === fullName)) {
-    //       const newAgent = { name: fullName, email: '' }
-    //       agentsData.value.push(newAgent)
-    //       selectedAgent.value = newAgent
-    //       name.value = email.value = ''
-    //     }
-    //   }
-    // }
-
-    // const update = () => {
-    //   if (hasValidInput() && selectedAgent.value) {
-    //     selectedAgent.value.name = `${name.value}, ${email.value}`
-    //   }
-    // }
-
-    // const del = () => {
-    //   if (selectedAgent.value) {
-    //     const index = agentsData.value.indexOf(selectedAgent.value)
-    //     agentsData.value.splice(index, 1)
-    //     selectedAgent.value = name.value = email.value = ''
-    //   }
-    // }
-
-    // const hasValidInput = () => {
-    //   return name.value.trim() && email.value.trim()
-    // }
 
     onMounted(async () => {
       try {
@@ -186,7 +150,6 @@ export default {
 
         const responseProducts = await axiosInstance.get('products')
         productsData.value = responseProducts.data
-        console.log(responseProducts)
       } catch (err) {
         console.error('Error fetching data:', err)
         error.value = err
@@ -195,12 +158,16 @@ export default {
 
     return {
       agentsData,
+      productsData,
       error,
       prefix,
-      selectedAgent,
       name,
+      description,
       email,
-      filteredAgents
+      agentName,
+      agentEmail,
+      filteredProducts,
+      selectedProduct
       // create,
       // update,
       // del
