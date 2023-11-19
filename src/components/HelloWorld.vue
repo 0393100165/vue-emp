@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <span>enter agernt name and email to online auction</span>
+      <span>enter agent name and email to online auction</span>
       <div class="input-group">
         <label for="agentName">Agent Name:</label>
         <input id="agentName" v-model="agentName" placeholder="Agent Name">
